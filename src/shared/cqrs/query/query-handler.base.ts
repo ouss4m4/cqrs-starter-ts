@@ -1,10 +1,10 @@
+import { Result } from "../../core/Result";
 import { Query } from "./query.base";
 
-export type QueryResult<T> = {
-  data: T;
-  metadata?: Record<string, unknown>;
-};
-
-export abstract class QueryHandler<TQuery extends Query<TResult>, TResult> {
-  abstract handle(query: TQuery): Promise<QueryResult<TResult>>;
+export abstract class QueryHandler<
+  Q extends Query,
+  TResult,
+  TError extends Error
+> {
+  abstract handle(query: Q): Promise<Result<TResult, TError>>;
 }

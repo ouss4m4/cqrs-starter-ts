@@ -1,5 +1,3 @@
-import { Message } from '../types/message';
-
-export abstract class Query<TResult> extends Message {
-  abstract readonly module: string;
+export abstract class Query {
+  // Base class for all queries
 }

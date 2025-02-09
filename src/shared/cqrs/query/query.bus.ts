@@ -1,32 +1,23 @@
-import {
-  HandlerNotFoundError,
-  HandlerAlreadyExistsError,
-} from "../errors/cqrs.error";
 import { Query } from "./query.base";
-import { QueryHandler, QueryResult } from "./query-handler.base";
+import { QueryHandler } from "./query-handler.base";
 
 export class QueryBus {
-  private handlers = new Map<string, new () => QueryHandler<any, any>>();
+  private handlers: Map<string, QueryHandler<any, any, any>> = new Map();
 
-  registerHandler<TQuery extends Query<TResult>, TResult>(
-    queryType: string,
-    handlerClass: new () => QueryHandler<TQuery, TResult>
-  ): void {
-    if (this.handlers.has(queryType)) {
-      throw new HandlerAlreadyExistsError(queryType);
-    }
-    this.handlers.set(queryType, handlerClass);
+  register<Q extends Query, R, E extends Error>(
+    queryType: new (...args: any[]) => Q,
+    handler: QueryHandler<Q, R, E>
+  ) {
+    this.handlers.set(queryType.name, handler);
   }
 
-  async execute<TQuery extends Query<TResult>, TResult>(
-    query: TQuery
-  ): Promise<QueryResult<TResult>> {
-    const HandlerClass = this.handlers.get(query.type);
-    if (!HandlerClass) {
-      throw new HandlerNotFoundError(query.type);
+  async execute<Q extends Query, R, E extends Error>(query: Q) {
+    const handler = this.handlers.get(query.constructor.name);
+    if (!handler) {
+      throw new Error(`No handler found for query: ${query.constructor.name}`);
     }
-
-    const handler = new HandlerClass();
     return handler.handle(query);
   }
 }
+
+// export const queryBus = new QueryBus();

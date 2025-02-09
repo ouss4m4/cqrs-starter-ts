@@ -3,9 +3,12 @@ import { OrderEntity, OrderReadEntity } from "../Entities";
 import { Order } from "../Order";
 
 export class OrderProjectionService {
+  private ordeReadRepo = AppDataSource.getRepository(OrderReadEntity);
   async saveOrder(order: Order) {
-    const ordeReadRepo = AppDataSource.getRepository(OrderReadEntity);
+    return await this.ordeReadRepo.save(order);
+  }
 
-    return await ordeReadRepo.save(order);
+  async findOrderById(orderId: string) {
+    return await this.ordeReadRepo.findOneBy({ orderId });
   }
 }
