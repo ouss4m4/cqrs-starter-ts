@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BaseController } from "../../shared/core/BaseController";
-import { orderBus } from "../order.bus";
+import { orderBus } from "./order.bus";
 import { CreateOrderDTO } from "./createOrder.dto";
 import { CreateOrderCommand } from "./createOrder.command";
 

@@ -1,4 +1,7 @@
+import { OrderService } from "./order.service";
 import { OrderEventService } from "./orderEvents.service";
 
 const orderEventService = new OrderEventService();
-export { orderEventService };
+const orderService = new OrderService();
+
+export { orderEventService, orderService };

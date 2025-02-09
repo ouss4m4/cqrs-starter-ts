@@ -4,6 +4,7 @@ import { CreateOrderCommand } from "./createOrder.command";
 import { Fail, Result, Success } from "../../shared/core/Result";
 import { OrderCreatedEvent } from "../Events/order-created.event";
 import { orderEventService } from "../Service";
+import { orderEventBus } from "../Events/event.bus";
 
 export class CreateOrderHandler extends CommandHandler<
   CreateOrderCommand,
@@ -26,8 +27,9 @@ export class CreateOrderHandler extends CommandHandler<
       // Create an Event for this command. persist it in the DB. and publish it to kafka
       const orderCreatedEvent = new OrderCreatedEvent(order);
       await orderEventService.saveOrderEvent(orderCreatedEvent);
-      
-      console.log(`Send Event to KAFKA so consumer does the DB change`);
+
+      await orderEventBus.execute(orderCreatedEvent);
+
       return new Success<string>(orderId);
     } catch (error) {
       return new Fail(
