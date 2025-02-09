@@ -1,4 +1,4 @@
-export abstract class Event {
+export abstract class BaseEvent {
   public readonly createdAt: Date;
 
   // Unique identifier for the event (optional, can be set by an event publisher like Kafka)

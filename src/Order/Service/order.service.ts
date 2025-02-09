@@ -3,9 +3,9 @@ import { OrderEntity } from "../Entities";
 import { Order } from "../Order";
 
 export class OrderService {
-  async createOrder(orderData: Order) {
+  async saveOrder(order: Order) {
     const orderRepo = AppDataSource.getRepository(OrderEntity);
 
-    return await orderRepo.save(orderData);
+    return await orderRepo.save(order);
   }
 }

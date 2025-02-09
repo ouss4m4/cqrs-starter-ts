@@ -1,7 +1,7 @@
 import { BaseEvent } from "../../shared/cqrs/events/event.base";
 import { Order } from "../Order";
 
-export class OrderCreatedEvent implements BaseEvent {
+export class OrderCompletedEvent implements BaseEvent {
   public createdAt: Date;
   public eventId: string;
   public eventType: string;
@@ -10,7 +10,7 @@ export class OrderCreatedEvent implements BaseEvent {
   constructor(data: Order) {
     this.createdAt = new Date();
     this.eventId = crypto.randomUUID();
-    this.eventType = "OrderCreated";
+    this.eventType = "OrderCompleted";
     this.eventData = data;
     this.orderId = data.orderId;
   }
