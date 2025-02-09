@@ -19,7 +19,7 @@ class CreateOrderController extends BaseController {
       return;
     }
 
-    let respOrError = await orderBus.execute<CreateOrderCommand, any, any>(
+    let respOrError = await orderBus.execute<CreateOrderCommand, string, Error>(
       command.value
     );
 

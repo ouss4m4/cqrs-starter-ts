@@ -14,7 +14,7 @@ export class CommandBus {
 
   registerHandler<TCommand extends Command, TResult>(
     command: new (...args: any[]) => TCommand,
-    handlerClass: new () => CommandHandler<TCommand, TResult, any>
+    handlerClass: new () => CommandHandler<TCommand, TResult, Error>
   ): void {
     if (this.handlers.has(command)) {
       throw new HandlerAlreadyExistsError(command.name);

@@ -22,8 +22,10 @@ export class CreateOrderHandler extends CommandHandler<
       );
 
       // Save to repository
-      console.log(`Save Event To EventStore`);
-      console.log(`Send Event to KAFKA so consumer does the DB change`);
+      console.log(order);
+      // TODO: For now do the direct imeplemetation. save to db thorugh a REPO
+      // later on, add KAFKA. and consumer should take care of this
+      // console.log(`Send Event to KAFKA so consumer does the DB change`);
       return new Success<string>(orderId);
     } catch (error) {
       return new Fail(
