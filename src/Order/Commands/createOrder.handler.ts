@@ -23,6 +23,7 @@ export class CreateOrderHandler extends CommandHandler<
       // Save to repository
       console.log(`Save Event To EventStore`);
       console.log(`Send Event to KAFKA so consumer does the DB change`);
+
       return this.success(orderId);
     } catch (error) {
       return this.failure(

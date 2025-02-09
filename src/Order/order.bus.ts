@@ -7,12 +7,4 @@ class OrderBus extends CommandBus {}
 const orderBus = new OrderBus();
 orderBus.registerHandler(CreateOrderCommand, CreateOrderHandler);
 
-const commandA = new CreateOrderCommand(
-  crypto.randomUUID(),
-  "BTC/USDT",
-  OrderType.BUY,
-  98645,
-  1
-);
-
-orderBus.execute(commandA);
+export { orderBus };
