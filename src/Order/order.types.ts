@@ -14,3 +14,7 @@ export const ORDER_TYPE_MAP = {
 } as const;
 
 export type OrderTypeString = keyof typeof ORDER_TYPE_MAP;
+
+export interface OrderToPersistance {
+  
+}

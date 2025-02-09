@@ -2,6 +2,8 @@ import { Order } from "./../Order";
 import { CommandHandler } from "../../shared/cqrs/command/command-handler.base";
 import { CreateOrderCommand } from "./createOrder.command";
 import { Fail, Result, Success } from "../../shared/core/Result";
+import { OrderCreatedEvent } from "../Events/order-created.event";
+import { orderEventService } from "../Service";
 
 export class CreateOrderHandler extends CommandHandler<
   CreateOrderCommand,
@@ -21,11 +23,11 @@ export class CreateOrderHandler extends CommandHandler<
         command.quantity
       );
 
-      // Save to repository
-      console.log(order);
-      // TODO: For now do the direct imeplemetation. save to db thorugh a REPO
-      // later on, add KAFKA. and consumer should take care of this
-      // console.log(`Send Event to KAFKA so consumer does the DB change`);
+      // Create an Event for this command. persist it in the DB. and publish it to kafka
+      const orderCreatedEvent = new OrderCreatedEvent(order);
+      await orderEventService.saveOrderEvent(orderCreatedEvent);
+      
+      console.log(`Send Event to KAFKA so consumer does the DB change`);
       return new Success<string>(orderId);
     } catch (error) {
       return new Fail(

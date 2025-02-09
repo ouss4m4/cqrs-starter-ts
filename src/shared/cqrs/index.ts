@@ -4,6 +4,4 @@ export * from "./command/command.bus";
 export * from "./query/query.base";
 export * from "./query/query-handler.base";
 export * from "./query/query.bus";
-export * from "./types/message";
-export * from "./types/response";
 export * from "./errors/cqrs.error";
