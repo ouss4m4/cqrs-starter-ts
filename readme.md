@@ -1,96 +1,85 @@
-# CQRS Trading System Example
+# Order Matching Engine with CQRS
 
-This project demonstrates a CQRS (Command Query Responsibility Segregation) architecture implementation in TypeScript, using a trading system as an example.
+A sophisticated order matching engine built using CQRS (Command Query Responsibility Segregation) pattern and Event Sourcing.
 
-## Implementation Flow
+## Technology Stack & Infrastructure
 
-### 1. Controller Layer
+### Backend Technologies
+
+- Node.js with TypeScript
+- Express.js for REST API
+- TypeORM for database operations
+- PostgreSQL for data persistence
+- Apache Kafka for event streaming
+- Docker & Docker Compose for containerization
+
+### Infrastructure Components
+
+1. **PostgreSQL Database**
+
+   - Handles both write and read models
+   - Stores order events, order state, and read projections
+
+2. **Apache Kafka**
+
+   - Event streaming platform for order events
+   - Uses Zookeeper for cluster management
+   - Handles event distribution between services
+
+3. **Docker Services**
+   - PostgreSQL container
+   - Kafka container
+   - Zookeeper container
+   - All services configured via docker-compose
+
+## Architecture
+
+The application follows CQRS pattern with Event Sourcing:
+
+### Core Components
+
+1. **Command Side (Write Model)**
+
+   - Handles order creation, modification, and state changes
+   - Validates business rules
+   - Generates events
+   - Updates write model
+
+2. **Query Side (Read Model)**
+
+   - Provides optimized data models for querying
+   - Maintains denormalized views
+   - Handles order status queries
+
+3. **Event Store**
+   - Stores all order events
+   - Provides event replay capability
+   - Ensures event consistency
+
+### Event Flow
+
+1. Command received → Command Handler processes
+2. Event generated → Stored in Event Store
+3. Event published to Kafka
+4. Consumers update read models
+5. Query handlers serve read requests
+
+## API Examples
+
+### Create Order Command
 
 ```typescript
-class CreateOrderController extends BaseController {
-  async executeImpl(req: Request, res: Response): Promise<void> {
-    // Validate request body and create DTO
-    const dto = CreateOrderDTO.validate(req.body);
-    if (dto.isFail()) {
-      this.fail(res, dto.error);
-      return;
-    }
-
-    // Convert DTO to Command
-    const command = CreateOrderDTO.toCommand(dto.value);
-    if (command.isFail()) {
-      this.fail(res, command.error);
-      return;
-    }
-
-    // Execute command and handle response
-    let respOrError = await orderBus.execute<CreateOrderCommand, string, Error>(
-      command.value
-    );
-
-    if (respOrError.isSuccess()) {
-      this.ok(res, respOrError.value);
-    } else {
-      this.fail(res, respOrError.error.message);
-    }
-  }
+// POST /orders
+{
+  "userId": "user123",
+  "asset": "BTC-USD",
+  "type": "BUY",
+  "price": 45000.00,
+  "quantity": 1.5
 }
 ```
 
-### 2. DTO Layer - Validation and Command Creation
-
-```typescript
-class CreateOrderDTO {
-  static toCommand(dto: CreateOrderDTO): Result<CreateOrderCommand, Error> {
-    try {
-      return new Success(
-        new CreateOrderCommand(
-          dto.userId,
-          dto.asset,
-          ORDER_TYPE_MAP[dto.orderType.toUpperCase()],
-          dto.price,
-          dto.quantity
-        )
-      );
-    } catch (error) {
-      return new Fail(
-        error instanceof Error ? error : new Error("Unexpected Error")
-      );
-    }
-  }
-}
-```
-
-### 3. Domain Model
-
-```typescript
-class Order {
-  static Create(
-    orderId: string,
-    userId: string,
-    asset: string,
-    type: OrderType,
-    price: number,
-    quantity: number,
-    status: OrderStatus = OrderStatus.PENDING
-  ) {
-    const now = new Date();
-    return new Order(
-      orderId,
-      userId,
-      asset,
-      type,
-      price,
-      quantity,
-      status,
-      now,
-      now
-    );
-  }
-}
-```
-
-### 4. Command Layer
+Command Implementation:
 
 ```typescript
 class CreateOrderCommand extends Command {
@@ -117,86 +106,61 @@ class CreateOrderCommand extends Command {
 }
 ```
 
-### 5. Command Handler
+### Get Order Query
 
 ```typescript
-class CreateOrderHandler extends CommandHandler<
-  CreateOrderCommand,
-  string,
-  Error
-> {
-  async handle(command: CreateOrderCommand): Promise<Result<string, Error>> {
+// GET /orders/:orderId
+```
+
+Query Implementation:
+
+```typescript
+class GetOrderQuery extends Query {
+  constructor(public readonly orderId: string) {
+    super();
+  }
+}
+
+class GetOrderHandler extends QueryHandler<GetOrderQuery, any, Error> {
+  async handle(query: GetOrderQuery): Promise<Result<OrderReadEntity, Error>> {
     try {
-      const orderId = crypto.randomUUID();
-      const order = Order.Create(
-        orderId,
-        command.userId,
-        command.asset,
-        command.orderType,
-        command.price,
-        command.quantity
-      );
-
-      // Create and persist event
-      const orderCreatedEvent = new OrderCreatedEvent(order);
-      await orderEventService.saveOrderEvent(orderCreatedEvent);
-
-      // Publish event
-      await orderEventBus.execute(orderCreatedEvent);
-
-      return new Success<string>(orderId);
+      const order = await orderReadRepo.findOrderById(query.orderId);
+      if (!order) {
+        return new Fail(new Error("Order not found"));
+      }
+      return new Success(order);
     } catch (error) {
       return new Fail(
-        error instanceof Error ? error : new Error("Failed to create order")
+        error instanceof Error ? error : new Error("Query failed")
       );
     }
   }
 }
 ```
 
-### 6. Event Layer
+Response Example:
 
-```typescript
-class OrderCreatedEvent implements BaseEvent {
-  public createdAt: Date;
-  public eventId: string;
-  public eventType: string;
-  public eventData: Order;
-  public orderId: string;
-
-  constructor(data: Order) {
-    this.createdAt = new Date();
-    this.eventId = crypto.randomUUID();
-    this.eventType = "OrderCreated";
-    this.eventData = data;
-    this.orderId = data.orderId;
-  }
+```json
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440000",
+  "userId": "user123",
+  "asset": "BTC-USD",
+  "type": "BUY",
+  "price": 45000.0,
+  "quantity": 1.5,
+  "status": "PENDING",
+  "createdAt": "2024-02-09T12:00:00Z",
+  "updatedAt": "2024-02-09T12:00:00Z"
 }
 ```
 
-### 7. Event Handler
+## Getting Started
 
-```typescript
-class OrderCreatedEventHandler extends EventHandler<
-  OrderCreatedEvent,
-  string,
-  Error
-> {
-  async handle(event: OrderCreatedEvent): Promise<Result<string, Error>> {
-    // Persist order to database
-    await orderService.saveOrder(event.eventData);
-    return new Success("done");
-  }
-}
-```
-
-## Key Features
-
-1. **Strong Validation**: Multiple layers of validation (DTO, Command)
-2. **Event Sourcing**: All changes are first recorded as events
-3. **Separation of Concerns**: Clear boundaries between validation, command handling, and event handling
-4. **Error Handling**: Comprehensive error handling using Result type
-5. **Domain-Driven Design**: Strong domain model with business rules encapsulation
+1. Clone the repository
+2. Copy `.env.sample` to `.env` and configure your environment variables
+3. Run `docker-compose up -d` to start infrastructure services
+4. Install dependencies with `pnpm install`
+5. Start the application with `pnpm start`
 
 ```
 
