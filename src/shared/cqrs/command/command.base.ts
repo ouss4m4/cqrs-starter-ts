@@ -1,5 +1,4 @@
-import { Message, MessageMetadata } from "../types/message";
-
-export abstract class Command extends Message {
+export abstract class Command {
   abstract readonly module: string;
+  abstract readonly type: string;
 }

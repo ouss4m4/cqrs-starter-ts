@@ -1,12 +1,12 @@
 import express, { json } from "express";
-import { OrderController } from "./Order/order.controller";
+import { ordersRouter } from "./Order/Create";
 
 const app = express();
 app.use(json());
 
 const port = process.env.PORT || 3001;
 
-app.post("/orders", OrderController.createOrder);
+app.use("/orders", ordersRouter);
 
 app.listen(port, () => {
   console.log(`Up and running on port ${port}`);

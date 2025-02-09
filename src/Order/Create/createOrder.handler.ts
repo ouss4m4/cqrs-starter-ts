@@ -1,13 +1,14 @@
 import { Order } from "./../Order";
 import { CommandHandler } from "../../shared/cqrs/command/command-handler.base";
-import { Result } from "../../shared/cqrs/types/response";
 import { CreateOrderCommand } from "./createOrder.command";
+import { Fail, Result, Success } from "../../shared/core/Result";
 
 export class CreateOrderHandler extends CommandHandler<
   CreateOrderCommand,
-  string
+  string,
+  Error
 > {
-  async handle(command: CreateOrderCommand): Promise<Result<string>> {
+  async handle(command: CreateOrderCommand): Promise<Result<string, Error>> {
     try {
       // Command is already validated at this point
       const orderId = crypto.randomUUID();
@@ -23,10 +24,9 @@ export class CreateOrderHandler extends CommandHandler<
       // Save to repository
       console.log(`Save Event To EventStore`);
       console.log(`Send Event to KAFKA so consumer does the DB change`);
-
-      return this.success(orderId);
+      return new Success<string>(orderId);
     } catch (error) {
-      return this.failure(
+      return new Fail(
         error instanceof Error ? error : new Error("Failed to create order")
       );
     }

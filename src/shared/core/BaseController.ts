@@ -23,7 +23,7 @@ export abstract class BaseController {
   public ok<T>(res: Response, dto?: T) {
     if (!!dto) {
       res.type("application/json");
-      return res.status(200).json(dto);
+      return res.status(200).json({ success: true, data: dto });
     } else {
       return res.sendStatus(200);
     }
@@ -93,9 +93,10 @@ export abstract class BaseController {
     return BaseController.jsonResponse(res, 400, "TODO");
   }
 
-  public fail(res: Response, error: Error | string) {
+  public fail(res: Response, error: Error | string, statusCode = 400) {
     console.log(error);
-    return res.status(500).json({
+    return res.status(statusCode).json({
+      succes: false,
       message: error.toString(),
     });
   }

@@ -1,7 +1,7 @@
-import { CreateOrderHandler } from "./Commands/createOrder.handler";
-import { CreateOrderCommand } from "./Commands/createOrder.command";
 import { CommandBus } from "./../shared/cqrs/command/command.bus";
-import { OrderType } from "./order.types";
+import { CreateOrderCommand } from "./Create/createOrder.command";
+import { CreateOrderHandler } from "./Create/createOrder.handler";
+
 class OrderBus extends CommandBus {}
 
 const orderBus = new OrderBus();

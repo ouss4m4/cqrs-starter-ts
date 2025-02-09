@@ -2,19 +2,19 @@ import {
   HandlerNotFoundError,
   HandlerAlreadyExistsError,
 } from "../errors/cqrs.error";
-import { Result } from "../types/response";
 import { Command } from "./command.base";
 import { CommandHandler } from "./command-handler.base";
+import { Result } from "../../core/Result";
 
 export class CommandBus {
   private handlers = new Map<
     new (...args: any[]) => Command,
-    new () => CommandHandler<any, any>
+    new () => CommandHandler<Command, any, any>
   >();
 
   registerHandler<TCommand extends Command, TResult>(
     command: new (...args: any[]) => TCommand,
-    handlerClass: new () => CommandHandler<TCommand, TResult>
+    handlerClass: new () => CommandHandler<TCommand, TResult, any>
   ): void {
     if (this.handlers.has(command)) {
       throw new HandlerAlreadyExistsError(command.name);
@@ -22,9 +22,9 @@ export class CommandBus {
     this.handlers.set(command, handlerClass);
   }
 
-  async execute<TCommand extends Command, TResult>(
+  async execute<TCommand extends Command, TResult, TError>(
     command: TCommand
-  ): Promise<Result<TResult>> {
+  ): Promise<Result<TResult, TError>> {
     const HandlerClass = this.handlers.get(
       command.constructor as new (...args: any[]) => Command
     );
@@ -32,15 +32,7 @@ export class CommandBus {
       throw new HandlerNotFoundError(command.constructor.name);
     }
 
-    try {
-      const handler = new HandlerClass();
-      return await handler.handle(command);
-    } catch (error) {
-      return {
-        success: false,
-        error:
-          error instanceof Error ? error : new Error("Unknown error occurred"),
-      };
-    }
+    const handler = new HandlerClass();
+    return await handler.handle(command);
   }
 }

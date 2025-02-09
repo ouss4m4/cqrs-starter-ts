@@ -57,12 +57,3 @@ export class Order {
     return new Order(orderId, userId, asset, type, price, quantity, status);
   }
 }
-
-// const orderA = Order.Create(
-//   crypto.randomUUID(),
-//   crypto.randomUUID(),
-//   "BTC/USDT",
-//   OrderType.BUY,
-//   87430,
-//   1
-// );
