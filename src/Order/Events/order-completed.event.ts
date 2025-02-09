@@ -1,7 +1,6 @@
-import { BaseEvent } from "../../shared/cqrs/events/event.base";
 import { Order } from "../Order";
 
-export class OrderCompletedEvent implements BaseEvent {
+export class OrderCompletedEvent {
   public createdAt: Date;
   public eventId: string;
   public eventType: string;

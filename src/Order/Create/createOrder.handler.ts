@@ -4,7 +4,7 @@ import { CreateOrderCommand } from "./createOrder.command";
 import { Fail, Result, Success } from "../../shared/core/Result";
 import { OrderCreatedEvent } from "../Events/order-created.event";
 import { orderEventService } from "../Service";
-import { orderEventBus } from "../Events/event.bus";
+import { kafkaClient } from "../../shared/kafka";
 
 export class CreateOrderHandler extends CommandHandler<
   CreateOrderCommand,
@@ -13,10 +13,8 @@ export class CreateOrderHandler extends CommandHandler<
 > {
   async handle(command: CreateOrderCommand): Promise<Result<string, Error>> {
     try {
-      // Command is already validated at this point
-      const orderId = crypto.randomUUID();
       const order = Order.Create(
-        orderId,
+        crypto.randomUUID(),
         command.userId,
         command.asset,
         command.orderType,
@@ -24,13 +22,15 @@ export class CreateOrderHandler extends CommandHandler<
         command.quantity
       );
 
-      // Create an Event for this command. persist it in the DB. and publish it to kafka
       const orderCreatedEvent = new OrderCreatedEvent(order);
       await orderEventService.saveOrderEvent(orderCreatedEvent);
 
-      await orderEventBus.execute(orderCreatedEvent);
+      await kafkaClient.producer.send({
+        topic: "OrderCreatedEvent",
+        messages: [{ value: JSON.stringify(orderCreatedEvent) }],
+      });
 
-      return new Success<string>(orderId);
+      return new Success<string>(order.orderId);
     } catch (error) {
       return new Fail(
         error instanceof Error ? error : new Error("Failed to create order")
