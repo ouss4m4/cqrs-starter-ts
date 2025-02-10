@@ -1,9 +1,9 @@
-import { Order } from "./../Order";
+import { Order } from "../Order";
 import { CommandHandler } from "../../shared/cqrs/command/command-handler.base";
-import { CreateOrderCommand } from "./createOrder.command";
+import { CreateOrderCommand } from "./create-order.command";
 import { Fail, Result, Success } from "../../shared/core/Result";
-import { OrderCreatedEvent } from "../Events/order-created.event";
-import { orderEventService } from "../Services";
+import { OrderCreatedEvent } from "../events/order-created.event";
+import { orderEventService } from "../services";
 import { kafkaClient } from "../../shared/kafka";
 
 export class CreateOrderHandler extends CommandHandler<

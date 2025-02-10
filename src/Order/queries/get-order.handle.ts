@@ -1,8 +1,8 @@
 import { QueryHandler } from "../../shared/cqrs/query/query-handler.base";
-import { orderReadRepo } from "../Services";
+import { orderReadRepo } from "../services";
 import { Fail, Result, Success } from "../../shared/core/Result";
-import { OrderReadEntity } from "../Entities";
-import { GetOrderQuery } from "./getOrder.query";
+import { OrderReadEntity } from "../entities";
+import { GetOrderQuery } from "./get-order.query";
 
 export class GetOrderHandler extends QueryHandler<GetOrderQuery, any, Error> {
   async handle(query: GetOrderQuery): Promise<Result<OrderReadEntity, Error>> {

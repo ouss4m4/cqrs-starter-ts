@@ -1,6 +1,6 @@
-import { OrderEventEntity } from "./../../Order/Entities/order-events.entity";
+import { OrderEventEntity } from "../../Order/entities/order-events.entity";
 import { DataSource } from "typeorm";
-import { OrderEntity, OrderReadEntity } from "../../Order/Entities";
+import { OrderEntity, OrderReadEntity } from "../../Order/entities";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

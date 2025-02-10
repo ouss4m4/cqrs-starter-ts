@@ -1,8 +1,8 @@
 import { query, Request, Response } from "express";
 import { BaseController } from "../../shared/core/BaseController";
-import { GetOrderQuery } from "../Queries/getOrder.query";
-import { OrderReadEntity } from "../Entities";
-import { orderQueryBus } from "../Queries/orderQueries.bus";
+import { GetOrderQuery } from "../queries/get-order.query";
+import { OrderReadEntity } from "../entities";
+import { orderQueryBus } from "../queries/order-queries.bus";
 
 class GetOrderController extends BaseController {
   public async executeImpl(req: Request, res: Response): Promise<void> {

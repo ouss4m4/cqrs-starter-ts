@@ -1,5 +1,5 @@
 import { AppDataSource } from "../../shared/db/datasource";
-import { OrderEntity } from "../Entities";
+import { OrderEntity } from "../entities";
 import { Order } from "../Order";
 
 export class OrderService {

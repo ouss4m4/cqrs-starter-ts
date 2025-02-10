@@ -1,6 +1,6 @@
 import { QueryBus } from "../../shared/cqrs";
-import { GetOrderHandler } from "./getOrder.handle";
-import { GetOrderQuery } from "./getOrder.query";
+import { GetOrderHandler } from "./get-order.handle";
+import { GetOrderQuery } from "./get-order.query";
 
 const orderQueryBus = new QueryBus();
 orderQueryBus.register(GetOrderQuery, new GetOrderHandler());
