@@ -1,8 +1,8 @@
 import { query, Request, Response } from "express";
 import { BaseController } from "../../shared/core/BaseController";
-import { GetOrderQuery } from "./getOrder.query";
+import { GetOrderQuery } from "../Queries/getOrder.query";
 import { OrderReadEntity } from "../Entities";
-import { orderQueryBus } from "../orderQueries.bus";
+import { orderQueryBus } from "../Queries/orderQueries.bus";
 
 class GetOrderController extends BaseController {
   public async executeImpl(req: Request, res: Response): Promise<void> {
@@ -12,7 +12,7 @@ class GetOrderController extends BaseController {
       this.fail(res, "OrderId missing");
       return;
     }
-    
+
     const getQuery = new GetOrderQuery(orderId);
 
     let respOrError = await orderQueryBus.execute<

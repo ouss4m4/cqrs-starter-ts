@@ -2,6 +2,70 @@
 
 A sophisticated order matching engine built using CQRS (Command Query Responsibility Segregation) pattern and Event Sourcing.
 
+## TODOs
+
+- Architecture boilerplate
+  - kafka as a broker ✅
+  - cqrs orders aggregate ✅
+  - postgres ✅ (typeorm)
+  - redis - wip
+  - grafana/prometheus todo
+- Orders - WIP
+
+  - create order ✅
+    - read/write model
+    - eventstore
+    - pending status by default
+  - Update Order:
+    - Implement event store for canceled/completed status (options: Postgres event sourcing, Event Store DB).
+    - Consider partial fulfillment when updating the order (e.g., partially matched orders stay open).
+  - Order Matching Logic:
+    - Decide whether to use a single-threaded or multi-threaded approach for matching. You could go async or use workers to handle multiple matches.
+    - Implement order price matching:
+      - Limit order matching: Handle matching based on specific price and time priority.
+      - Market order matching: Fulfill at the best available price.
+    - Advanced Matching:
+      - Slippage: Consider implementing logic to allow or avoid price slippage (e.g., executing at the next best price if the market moves).
+      - Partial Order Execution: Handle cases where orders are only partially filled.
+
+- Order Matching Engine - WIP
+
+  - Min-Max Heap:
+    - Refine the heap structure:
+      - Buy Orders Heap: Max-heap (prioritize highest buy prices).
+      - Sell Orders Heap: Min-heap (prioritize lowest sell prices).
+    - Heap Operations:
+      - Insert, Remove, and Peek operations.
+      - Handle simultaneous heap updates when an order is executed.
+  - Cache Setup:
+    - Use Redis to cache order data (e.g., order details and market price).
+    - Cache the order book for faster lookups.
+    - Eviction strategies (LRU, FIFO, etc.) based on order expiry or matching activity.
+  - Schedulers/Async Operations:
+    - Use Cron jobs or BullMQ for handling timed tasks:
+    - Regularly clean up expired orders.
+    - Schedule order matching in off-peak hours or during peak market activity.
+    - Consider rate-limiting or backpressure for batch processing.
+  - Queue (BullMQ):
+    - Set up BullMQ queues for:
+    - Order processing (matching).
+    - Trade execution (distribute matching tasks to workers).
+    - Use BullMQ workers to process orders concurrently or in batches.
+    - Integrate delayed jobs for time-sensitive orders (e.g., order expiration).
+
+- Data Consistency and Reliability
+
+  - Eventual Consistency: Ensure that orders are eventually matched and order states (pending, canceled, completed) are synchronized across systems.
+  - Atomicity: Make sure matching and order updates happen atomically, possibly using transactions or sagas.
+
+- Monitoring & Logging
+  - Grafana/Prometheus:
+  - Integrate Prometheus to track metrics like order fulfillment rate, matching latency, queue length, etc.
+  - Grafana dashboards to visualize order flow, market prices, and system health.
+  - Logging:
+  - Add logging for order matching activities and errors.
+  - Consider a distributed tracing system (e.g., Jaeger) for tracing order matching events across services.
+
 ## Technology Stack & Infrastructure
 
 ### Backend Technologies
@@ -161,7 +225,3 @@ Response Example:
 3. Run `docker-compose up -d` to start infrastructure services
 4. Install dependencies with `pnpm install`
 5. Start the application with `pnpm start`
-
-```
-
-```

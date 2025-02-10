@@ -1,6 +1,6 @@
 import { Fail, Result, Success } from "../../shared/core/Result";
+import { CreateOrderCommand } from "../Commands/createOrder.command";
 import { ORDER_TYPE_MAP, OrderTypeString } from "../order.types";
-import { CreateOrderCommand } from "./createOrder.command";
 
 export class CreateOrderDTO {
   userId: string;

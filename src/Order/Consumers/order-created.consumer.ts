@@ -1,6 +1,6 @@
 import { kafkaClient } from "../../shared/kafka";
 import { OrderCreatedEvent } from "../Events";
-import { orderReadRepo, orderService } from "../Service";
+import { orderReadRepo, orderService } from "../Services";
 
 export const startOrderCreatedConsumer = async () => {
   const consumer = kafkaClient.consumer;

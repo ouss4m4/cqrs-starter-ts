@@ -3,7 +3,7 @@ import { CommandHandler } from "../../shared/cqrs/command/command-handler.base";
 import { CreateOrderCommand } from "./createOrder.command";
 import { Fail, Result, Success } from "../../shared/core/Result";
 import { OrderCreatedEvent } from "../Events/order-created.event";
-import { orderEventService } from "../Service";
+import { orderEventService } from "../Services";
 import { kafkaClient } from "../../shared/kafka";
 
 export class CreateOrderHandler extends CommandHandler<
