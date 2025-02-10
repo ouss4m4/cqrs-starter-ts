@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { BaseController } from "../../shared/core/BaseController";
 import { orderBus } from "../commands/order-commands.bus";
 import { CreateOrderDTO } from "./create-order.dto";
-import { CreateOrderCommand } from "../commands/create-order.command";
+import { CreateOrderCommand } from "../commands/create/create-order.command";
 
 class CreateOrderController extends BaseController {
   public async executeImpl(req: Request, res: Response): Promise<void> {

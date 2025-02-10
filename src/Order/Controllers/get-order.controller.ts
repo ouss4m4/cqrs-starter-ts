@@ -1,4 +1,4 @@
-import { query, Request, Response } from "express";
+import { Request, Response } from "express";
 import { BaseController } from "../../shared/core/BaseController";
 import { GetOrderQuery } from "../queries/get-order.query";
 import { OrderReadEntity } from "../entities";

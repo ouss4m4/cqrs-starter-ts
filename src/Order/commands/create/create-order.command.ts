@@ -1,5 +1,5 @@
-import { Command } from "../../shared/cqrs/command/command.base";
-import { OrderType } from "../order.types";
+import { Command } from "../../../shared/cqrs";
+import { OrderType } from "../../order.types";
 
 export class CreateOrderCommand extends Command {
   readonly type = "CREATE_ORDER";

@@ -1,3 +1,4 @@
+import { OrderEntity } from "./entities/order.entity";
 import { OrderStatus, OrderType } from "./order.types";
 
 export class Order {
@@ -74,9 +75,17 @@ export class Order {
     );
   }
 
-  toPersistance() {
-    return {
-      order_id: this.orderId,
-    };
+  static fromPersistance(data: OrderEntity): Order {
+    return new Order(
+      data.orderId,
+      data.userId,
+      data.asset,
+      data.type,
+      data.price,
+      data.quantity,
+      data.status,
+      data.createdAt,
+      data.updatedAt
+    );
   }
 }
