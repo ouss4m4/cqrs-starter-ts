@@ -1,6 +1,6 @@
 import { Order } from "../Order";
 
-export class OrderCancelledEvent {
+export class OrderCanceledEvent {
   public createdAt: Date;
   public eventId: string;
   public eventType: string;
@@ -9,7 +9,7 @@ export class OrderCancelledEvent {
   constructor(data: Order) {
     this.createdAt = new Date();
     this.eventId = crypto.randomUUID();
-    this.eventType = "OrderCancelled";
+    this.eventType = "OrderCanceled";
     this.eventData = data;
     this.orderId = data.orderId;
   }

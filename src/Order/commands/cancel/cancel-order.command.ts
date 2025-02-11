@@ -1,6 +1,6 @@
 import { Command } from "../../../shared/cqrs";
 
-export class CompleteOrderCommand extends Command {
+export class CancelOrderCommand extends Command {
   readonly type = "COMPLETE_ORDER";
   readonly module = "orders";
 
@@ -8,7 +8,6 @@ export class CompleteOrderCommand extends Command {
     super();
     this.validate();
   }
-
   private validate(): void {
     if (!this.orderId) throw new Error("OrderId is required");
     if (!this.userId) throw new Error("UserId is required");

@@ -7,7 +7,7 @@ const kafka = new Kafka({
 
 export const kafkaClient = {
   producer: kafka.producer(),
-  consumer: kafka.consumer({ groupId: "order-events" }),
+  consumer: kafka.consumer({ groupId: "order-events", heartbeatInterval: 0 }),
 };
 
 export async function startKafka() {

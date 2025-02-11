@@ -7,7 +7,7 @@ export const startOrderCreatedConsumer = async () => {
   await consumer.connect();
   await consumer.subscribe({
     topic: "OrderCreatedEvent",
-    fromBeginning: false,
+    fromBeginning: true,
   });
 
   await consumer.run({

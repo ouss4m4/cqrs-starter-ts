@@ -43,6 +43,7 @@ export class Order {
       throw new Error("Only pending orders can be canceled");
     }
     this.status = OrderStatus.CANCELED;
+    this.updatedAt = new Date();
   }
 
   complete() {
@@ -50,6 +51,7 @@ export class Order {
       throw new Error("Only pending orders can be fullfiled");
     }
     this.status = OrderStatus.COMPLETED;
+    this.updatedAt = new Date();
   }
 
   static Create(
